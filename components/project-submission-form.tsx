@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { CheckCircle2 } from "lucide-react"
 
@@ -8,48 +10,50 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 export default function ProjectSubmissionForm() {
   const [submitted, setSubmitted] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     department: "",
     projectTitle: "",
     projectDescription: "",
-    projectType: "individual",
     resources: "",
-    timeline: "",
   })
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
+  const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }))
   }
 
-  const handleSelectChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
+    setIsLoading(true)
 
-    // Simulate form submission with a delay
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmitted(true)
-      // Reset form data if needed
-      // setFormData({...initial state})
-    }, 1500)
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    // Here you would normally send the data to your backend
+    console.log("Project submission data:", formData)
+
+    setSubmitted(true)
+    setIsLoading(false)
+  }
+
+  const resetForm = () => {
+    setSubmitted(false)
+    setFormData({
+      name: "",
+      email: "",
+      department: "",
+      projectTitle: "",
+      projectDescription: "",
+      resources: "",
+    })
   }
 
   if (submitted) {
@@ -61,7 +65,18 @@ export default function ProjectSubmissionForm() {
           Thank you for submitting your project idea. Our team will review your submission and get back to you within
           3-5 business days.
         </p>
-        <Button onClick={() => setSubmitted(false)}>Submit Another Idea</Button>
+        <div className="space-y-2 text-sm text-muted-foreground">
+          <p>
+            <strong>Project:</strong> {formData.projectTitle}
+          </p>
+          <p>
+            <strong>Submitted by:</strong> {formData.name}
+          </p>
+          <p>
+            <strong>Department:</strong> {formData.department}
+          </p>
+        </div>
+        <Button onClick={resetForm}>Submit Another Idea</Button>
       </div>
     )
   }
@@ -69,41 +84,43 @@ export default function ProjectSubmissionForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid gap-2">
-        <Label htmlFor="name">
-          Full Name <span className="text-red-500">*</span>
-        </Label>
-        <Input id="name" name="name" placeholder="Your name" value={formData.name} onChange={handleChange} required />
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="email">
-          Email <span className="text-red-500">*</span>
-        </Label>
+        <Label htmlFor="name">Full Name *</Label>
         <Input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="Your university email"
-          value={formData.email}
-          onChange={handleChange}
+          id="name"
+          placeholder="Your name"
+          value={formData.name}
+          onChange={(e) => handleInputChange("name", e.target.value)}
           required
         />
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="department">
-          Department <span className="text-red-500">*</span>
-        </Label>
-        <Select value={formData.department} onValueChange={(value) => handleSelectChange("department", value)} required>
+        <Label htmlFor="email">Email *</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="Your university email"
+          value={formData.email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="department">Department *</Label>
+        <Select value={formData.department} onValueChange={(value) => handleInputChange("department", value)} required>
           <SelectTrigger id="department">
             <SelectValue placeholder="Select department" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="computer-science">Computer Science</SelectItem>
-            <SelectItem value="engineering">Engineering</SelectItem>
-            <SelectItem value="biology">Biology</SelectItem>
+            <SelectItem value="electronics-communication">Electronics & Communication</SelectItem>
+            <SelectItem value="mechanical-engineering">Mechanical Engineering</SelectItem>
+            <SelectItem value="civil-engineering">Civil Engineering</SelectItem>
+            <SelectItem value="biotechnology">Biotechnology</SelectItem>
             <SelectItem value="chemistry">Chemistry</SelectItem>
             <SelectItem value="physics">Physics</SelectItem>
+            <SelectItem value="mathematics">Mathematics</SelectItem>
             <SelectItem value="psychology">Psychology</SelectItem>
             <SelectItem value="business">Business</SelectItem>
             <SelectItem value="arts">Arts & Humanities</SelectItem>
@@ -113,61 +130,24 @@ export default function ProjectSubmissionForm() {
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="projectTitle">
-          Project Title <span className="text-red-500">*</span>
-        </Label>
+        <Label htmlFor="project-title">Project Title *</Label>
         <Input
-          id="projectTitle"
-          name="projectTitle"
+          id="project-title"
           placeholder="A concise title for your project"
           value={formData.projectTitle}
-          onChange={handleChange}
+          onChange={(e) => handleInputChange("projectTitle", e.target.value)}
           required
         />
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="projectType">
-          Project Type <span className="text-red-500">*</span>
-        </Label>
-        <RadioGroup
-          defaultValue="individual"
-          value={formData.projectType}
-          onValueChange={(value) => handleSelectChange("projectType", value)}
-          className="flex flex-col space-y-1"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="individual" id="individual" />
-            <Label htmlFor="individual" className="font-normal">
-              Individual Project
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="team" id="team" />
-            <Label htmlFor="team" className="font-normal">
-              Team Project
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="collaboration" id="collaboration" />
-            <Label htmlFor="collaboration" className="font-normal">
-              Faculty Collaboration
-            </Label>
-          </div>
-        </RadioGroup>
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="projectDescription">
-          Project Description <span className="text-red-500">*</span>
-        </Label>
+        <Label htmlFor="project-description">Project Description *</Label>
         <Textarea
-          id="projectDescription"
-          name="projectDescription"
+          id="project-description"
           placeholder="Describe your project idea, its objectives, and potential impact"
           className="min-h-[120px]"
           value={formData.projectDescription}
-          onChange={handleChange}
+          onChange={(e) => handleInputChange("projectDescription", e.target.value)}
           required
         />
       </div>
@@ -176,38 +156,16 @@ export default function ProjectSubmissionForm() {
         <Label htmlFor="resources">Resources Needed</Label>
         <Textarea
           id="resources"
-          name="resources"
           placeholder="What resources, equipment, or support would you need to complete this project?"
           className="min-h-[80px]"
           value={formData.resources}
-          onChange={handleChange}
+          onChange={(e) => handleInputChange("resources", e.target.value)}
         />
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="timeline">Expected Timeline</Label>
-        <Select value={formData.timeline} onValueChange={(value) => handleSelectChange("timeline", value)}>
-          <SelectTrigger id="timeline">
-            <SelectValue placeholder="Select expected timeline" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1-3-months">1-3 months</SelectItem>
-            <SelectItem value="3-6-months">3-6 months</SelectItem>
-            <SelectItem value="6-12-months">6-12 months</SelectItem>
-            <SelectItem value="over-12-months">Over 12 months</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="pt-2">
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit Project Idea"}
-        </Button>
-      </div>
-
-      <p className="text-xs text-muted-foreground text-center pt-2">
-        Fields marked with <span className="text-red-500">*</span> are required
-      </p>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? "Submitting Project Idea..." : "Submit Project Idea"}
+      </Button>
     </form>
   )
 }

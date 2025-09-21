@@ -26,6 +26,9 @@ export default function ForumPage() {
             <Link href="/forum" className="text-sm font-medium hover:underline underline-offset-4 text-amber-600">
               Forum
             </Link>
+            <Link href="/faculty" className="text-sm font-medium hover:underline underline-offset-4">
+              Faculty
+            </Link>
             <Link href="/#submit" className="text-sm font-medium hover:underline underline-offset-4">
               Submit
             </Link>

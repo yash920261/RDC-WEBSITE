@@ -1,41 +1,14 @@
 import Link from "next/link"
-import { ArrowRight, Beaker, BookOpen, FileText, GraduationCap, Lightbulb, MessageSquare, Users } from "lucide-react"
+import { ArrowRight, BookOpen, FileText, GraduationCap, Lightbulb, MessageSquare, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import ClientHeader from "@/components/client-header"
 import ProjectSubmissionForm from "@/components/project-submission-form"
-import ContactForm from "@/components/contact-form"
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
-          <div className="flex items-center gap-2 font-bold">
-            <Beaker className="h-5 w-5" />
-            <span>UniR&D Center</span>
-          </div>
-          <nav className="ml-auto flex gap-4 sm:gap-6">
-            <Link href="#" className="text-sm font-medium hover:underline underline-offset-4">
-              Home
-            </Link>
-            <Link href="#projects" className="text-sm font-medium hover:underline underline-offset-4">
-              Projects
-            </Link>
-            <Link href="/forum" className="text-sm font-medium hover:underline underline-offset-4">
-              Forum
-            </Link>
-            <Link href="#submit" className="text-sm font-medium hover:underline underline-offset-4">
-              Submit
-            </Link>
-            <Link href="#about" className="text-sm font-medium hover:underline underline-offset-4">
-              About
-            </Link>
-            <Link href="#contact" className="text-sm font-medium hover:underline underline-offset-4">
-              Contact
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <ClientHeader />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-amber-50 to-white">
           <div className="container px-4 md:px-6">
@@ -57,7 +30,7 @@ export default function Home() {
                     </Button>
                   </Link>
                   <Link href="#submit">
-                    <Button variant="outline" className="px-8">
+                    <Button variant="outline" className="px-8 bg-transparent">
                       Submit Your Idea
                     </Button>
                   </Link>
@@ -181,7 +154,7 @@ export default function Home() {
               />
             </div>
             <div className="flex justify-center">
-              <Button variant="outline" className="mt-4">
+              <Button variant="outline" className="mt-4 bg-transparent">
                 View All Projects
               </Button>
             </div>
@@ -254,7 +227,7 @@ export default function Home() {
                 <div className="space-y-2">
                   <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">About Our R&D Center</h2>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    Established in 1997, our Research and Development Center has been at the forefront of student
+                    Established in 2010, our Research and Development Center has been at the forefront of student
                     innovation and academic excellence.
                   </p>
                 </div>
@@ -301,9 +274,9 @@ export default function Home() {
               <div className="flex flex-col space-y-4">
                 <div className="space-y-2">
                   <h3 className="text-xl font-bold">Contact Information</h3>
-                  <p className="text-muted-foreground">Email: manavrachna.edu.in</p>
-                  <p className="text-muted-foreground">Phone: 0129 425 9000</p>
-                  <p className="text-muted-foreground">Address: </p>
+                  <p className="text-muted-foreground">Email: research@university.edu</p>
+                  <p className="text-muted-foreground">Phone: (555) 123-4567</p>
+                  <p className="text-muted-foreground">Address: 123 University Ave, Campus Building 4, Room 201</p>
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl font-bold">Office Hours</h3>
@@ -322,7 +295,7 @@ export default function Home() {
       <footer className="w-full border-t py-6 md:py-0">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            © 2025 MRIIRS R&D Center. All rights reserved.
+            © 2025 University R&D Center. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link href="#" className="text-sm font-medium hover:underline underline-offset-4">
@@ -358,10 +331,18 @@ function ProjectCard({ title, department, student, description, imageUrl }) {
           <span className="text-sm text-muted-foreground">by {student}</span>
         </div>
         <p className="text-muted-foreground">{description}</p>
-        <Button variant="outline" className="mt-2">
+        <Button variant="outline" className="mt-2 bg-transparent">
           View Project
         </Button>
       </div>
+    </div>
+  )
+}
+
+const ContactForm = () => {
+  return (
+    <div>
+      <p>Contact Form</p>
     </div>
   )
 }
