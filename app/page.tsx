@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, FileText, GraduationCap, Lightbulb, MessageSquare
 import { Button } from "@/components/ui/button"
 import ClientHeader from "@/components/client-header"
 import ProjectSubmissionForm from "@/components/project-submission-form"
+import ContactForm from "@/components/contact-form"
 
 export default function Home() {
   return (
@@ -335,14 +336,6 @@ function ProjectCard({ title, department, student, description, imageUrl }) {
           View Project
         </Button>
       </div>
-    </div>
-  )
-}
-
-const ContactForm = () => {
-  return (
-    <div>
-      <p>Contact Form</p>
     </div>
   )
 }
