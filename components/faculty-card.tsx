@@ -1,6 +1,18 @@
 "use client"
 
-import { Mail, Phone, MapPin, Award, BookOpen, Users, GraduationCap, ChevronDown, ChevronUp, Globe } from "lucide-react"
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Award,
+  BookOpen,
+  Users,
+  GraduationCap,
+  ChevronDown,
+  ChevronUp,
+  Globe,
+  Trash2,
+} from "lucide-react"
 import { useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Button } from "@/components/ui/button"
@@ -41,6 +53,7 @@ interface FacultyCardProps {
     lastUpdated: string
   }
   onEdit?: (facultyData: any) => void
+  onDelete?: (facultyId: string) => void
 }
 
 export default function FacultyCard({
@@ -61,6 +74,7 @@ export default function FacultyCard({
   webProfile,
   analytics,
   onEdit,
+  onDelete,
 }: FacultyCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { user } = useAuth()
@@ -82,6 +96,12 @@ export default function FacultyCard({
     projects,
     webProfile,
     analytics,
+  }
+
+  const handleDelete = () => {
+    if (window.confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
+      onDelete?.(id || "")
+    }
   }
 
   return (
@@ -265,6 +285,11 @@ export default function FacultyCard({
               </Button>
             </Link>
             {user?.role === "admin" && onEdit && <EditFacultyDialog faculty={facultyData} onEditFaculty={onEdit} />}
+            {user?.role === "admin" && onDelete && (
+              <Button size="sm" variant="destructive" onClick={handleDelete}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
             <CollapsibleTrigger asChild>
               <Button size="sm" variant="ghost" className="px-2">
                 {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}

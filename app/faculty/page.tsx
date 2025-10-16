@@ -254,6 +254,10 @@ export default function FacultyPage() {
     setFacultyList((prev) => prev.map((faculty) => (faculty.id === editedFaculty.id ? editedFaculty : faculty)))
   }
 
+  const handleDeleteFaculty = (facultyId: string) => {
+    setFacultyList((prev) => prev.filter((faculty) => faculty.id !== facultyId))
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -346,7 +350,7 @@ export default function FacultyPage() {
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {facultyList.map((faculty) => (
-                <FacultyCard key={faculty.id} {...faculty} onEdit={handleEditFaculty} />
+                <FacultyCard key={faculty.id} {...faculty} onEdit={handleEditFaculty} onDelete={handleDeleteFaculty} />
               ))}
             </div>
           </div>
