@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -27,6 +26,7 @@ export default function AddFacultyDialog({ onAddFaculty }: AddFacultyDialogProps
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [profileImage, setProfileImage] = useState("")
+  const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -73,8 +73,10 @@ export default function AddFacultyDialog({ onAddFaculty }: AddFacultyDialogProps
     setIsLoading(false)
     setProfileImage("")
 
-    // Reset form
-    e.currentTarget.reset()
+    // Reset form using ref
+    if (formRef.current) {
+      formRef.current.reset()
+    }
   }
 
   return (
@@ -91,7 +93,7 @@ export default function AddFacultyDialog({ onAddFaculty }: AddFacultyDialogProps
           <DialogDescription>Fill in the details to add a new faculty member to the R&D center.</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <ImageUpload value={profileImage} onChange={setProfileImage} />
 
           <div className="grid grid-cols-2 gap-4">
