@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ArrowLeft, Beaker, BarChart3 } from "lucide-react"
+import { ArrowLeft, Beaker, BarChart3 } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -245,17 +245,48 @@ const initialFacultyData = [
 export default function FacultyPage() {
   const { user } = useAuth()
   const [facultyList, setFacultyList] = useState(initialFacultyData)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load faculty from localStorage on component mount
+  useEffect(() => {
+    const savedFaculty = localStorage.getItem("facultyList")
+    if (savedFaculty) {
+      try {
+        const parsedFaculty = JSON.parse(savedFaculty)
+        setFacultyList(parsedFaculty)
+      } catch (error) {
+        console.error("Error parsing saved faculty:", error)
+        setFacultyList(initialFacultyData)
+      }
+    }
+    setIsLoaded(true)
+  }, [])
 
   const handleAddFaculty = (newFaculty: any) => {
-    setFacultyList((prev) => [...prev, newFaculty])
+    const updatedList = [...facultyList, newFaculty]
+    setFacultyList(updatedList)
+    // Save to localStorage
+    localStorage.setItem("facultyList", JSON.stringify(updatedList))
   }
 
   const handleEditFaculty = (editedFaculty: any) => {
-    setFacultyList((prev) => prev.map((faculty) => (faculty.id === editedFaculty.id ? editedFaculty : faculty)))
+    const updatedList = facultyList.map((faculty) =>
+      faculty.id === editedFaculty.id ? editedFaculty : faculty
+    )
+    setFacultyList(updatedList)
+    // Save to localStorage
+    localStorage.setItem("facultyList", JSON.stringify(updatedList))
   }
 
   const handleDeleteFaculty = (facultyId: string) => {
-    setFacultyList((prev) => prev.filter((faculty) => faculty.id !== facultyId))
+    const updatedList = facultyList.filter((faculty) => faculty.id !== facultyId)
+    setFacultyList(updatedList)
+    // Save to localStorage
+    localStorage.setItem("facultyList", JSON.stringify(updatedList))
+  }
+
+  if (!isLoaded) {
+    return <div className="container py-10">Loading...</div>
   }
 
   return (

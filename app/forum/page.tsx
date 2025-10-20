@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ArrowLeft, PlusCircle, Search, Beaker } from "lucide-react"
 
@@ -6,8 +9,22 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ForumTopicList from "@/components/forum-topic-list"
 import ForumCategoryList from "@/components/forum-category-list"
+import NewDiscussionForm from "@/components/new-discussion-form"
+import { initializeForumData } from "@/lib/forum-data"
 
 export default function ForumPage() {
+  const [newDiscussionOpen, setNewDiscussionOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  useEffect(() => {
+    initializeForumData()
+  }, [])
+
+  const handleNewDiscussionSuccess = () => {
+    setRefreshKey((prev) => prev + 1)
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -60,9 +77,15 @@ export default function ForumPage() {
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input type="search" placeholder="Search discussions..." className="w-full bg-background pl-8" />
+                  <Input
+                    type="search"
+                    placeholder="Search discussions..."
+                    className="w-full bg-background pl-8"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
-                <Button>
+                <Button onClick={() => setNewDiscussionOpen(true)}>
                   <PlusCircle className="mr-2 h-4 w-4" />
                   New Discussion
                 </Button>
@@ -81,13 +104,13 @@ export default function ForumPage() {
                   <TabsTrigger value="categories">Categories</TabsTrigger>
                 </TabsList>
               </div>
-              <TabsContent value="recent" className="pt-6">
-                <ForumTopicList />
+              <TabsContent value="recent" className="pt-6" key={`recent-${refreshKey}`}>
+                <ForumTopicList sortBy="recent" searchQuery={searchQuery} />
               </TabsContent>
-              <TabsContent value="popular" className="pt-6">
-                <ForumTopicList sortBy="popular" />
+              <TabsContent value="popular" className="pt-6" key={`popular-${refreshKey}`}>
+                <ForumTopicList sortBy="popular" searchQuery={searchQuery} />
               </TabsContent>
-              <TabsContent value="categories" className="pt-6">
+              <TabsContent value="categories" className="pt-6" key={`categories-${refreshKey}`}>
                 <ForumCategoryList />
               </TabsContent>
             </Tabs>
@@ -112,6 +135,12 @@ export default function ForumPage() {
           </div>
         </div>
       </footer>
+
+      <NewDiscussionForm
+        open={newDiscussionOpen}
+        onOpenChange={setNewDiscussionOpen}
+        onSuccess={handleNewDiscussionSuccess}
+      />
     </div>
   )
 }

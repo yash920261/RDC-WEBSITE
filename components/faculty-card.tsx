@@ -274,12 +274,7 @@ export default function FacultyCard({
               <Mail className="h-3 w-3 mr-1" />
               Contact
             </Button>
-            <Link
-              href={`/faculty/${name
-                .toLowerCase()
-                .replace(/\s+/g, "-")
-                .replace(/[^a-z0-9-]/g, "")}`}
-            >
+            <Link href={`/faculty/${id}`}>
               <Button size="sm" variant="outline" className="flex-1 bg-transparent">
                 View Profile
               </Button>

@@ -68,6 +68,15 @@ export default function AddFacultyDialog({ onAddFaculty }: AddFacultyDialogProps
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
+    // Save to localStorage
+    try {
+      const existingFaculty = JSON.parse(localStorage.getItem("faculty") || "[]")
+      const updatedFaculty = [...existingFaculty, facultyData]
+      localStorage.setItem("faculty", JSON.stringify(updatedFaculty))
+    } catch (error) {
+      console.error("Error saving to localStorage:", error)
+    }
+
     onAddFaculty(facultyData)
     setIsOpen(false)
     setIsLoading(false)

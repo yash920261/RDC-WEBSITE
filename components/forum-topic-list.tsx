@@ -1,97 +1,49 @@
+"use client"
+
 import Link from "next/link"
 import { MessageSquare, ThumbsUp } from "lucide-react"
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import { getForumTopics } from "@/lib/forum-data"
 
 interface ForumTopicListProps {
   sortBy?: "recent" | "popular"
+  searchQuery?: string
 }
 
-export default function ForumTopicList({ sortBy = "recent" }: ForumTopicListProps) {
-  // This would typically come from a database
-  const topics = [
-    {
-      id: 1,
-      title: "Machine Learning approaches for climate data analysis",
-      author: {
-        name: "Alex Johnson",
-        avatar: "/placeholder.svg?height=40&width=40",
-        department: "Computer Science",
-      },
-      category: "Technology & Innovation",
-      replies: 24,
-      likes: 42,
-      lastActivity: "2 hours ago",
-      tags: ["Machine Learning", "Climate Science", "Data Analysis"],
-    },
-    {
-      id: 2,
-      title: "Seeking collaborators for sustainable architecture project",
-      author: {
-        name: "Maya Patel",
-        avatar: "/placeholder.svg?height=40&width=40",
-        department: "Architecture",
-      },
-      category: "Collaboration Opportunities",
-      replies: 18,
-      likes: 31,
-      lastActivity: "5 hours ago",
-      tags: ["Sustainability", "Architecture", "Urban Planning"],
-    },
-    {
-      id: 3,
-      title: "Best practices for qualitative research interviews",
-      author: {
-        name: "Carlos Rodriguez",
-        avatar: "/placeholder.svg?height=40&width=40",
-        department: "Sociology",
-      },
-      category: "Research Methodologies",
-      replies: 36,
-      likes: 27,
-      lastActivity: "1 day ago",
-      tags: ["Qualitative Research", "Interviews", "Methodology"],
-    },
-    {
-      id: 4,
-      title: "New findings in quantum computing algorithms",
-      author: {
-        name: "Sarah Chen",
-        avatar: "/placeholder.svg?height=40&width=40",
-        department: "Physics",
-      },
-      category: "Technology & Innovation",
-      replies: 42,
-      likes: 56,
-      lastActivity: "3 days ago",
-      tags: ["Quantum Computing", "Algorithms", "Theoretical Physics"],
-    },
-    {
-      id: 5,
-      title: "Funding opportunities for undergraduate research projects",
-      author: {
-        name: "James Wilson",
-        avatar: "/placeholder.svg?height=40&width=40",
-        department: "Research Office",
-      },
-      category: "Research Methodologies",
-      replies: 29,
-      likes: 48,
-      lastActivity: "4 days ago",
-      tags: ["Funding", "Grants", "Undergraduate Research"],
-    },
-  ]
+export default function ForumTopicList({ sortBy = "recent", searchQuery = "" }: ForumTopicListProps) {
+  const allTopics = getForumTopics()
 
-  // Sort topics based on the sortBy prop
-  const sortedTopics = [...topics].sort((a, b) => {
+  let filteredTopics = allTopics
+
+  // Filter by search query
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase()
+    filteredTopics = filteredTopics.filter(
+      (topic) =>
+        topic.title.toLowerCase().includes(query) ||
+        topic.content.toLowerCase().includes(query) ||
+        topic.tags.some((tag) => tag.toLowerCase().includes(query)),
+    )
+  }
+
+  // Sort topics
+  const sortedTopics = [...filteredTopics].sort((a, b) => {
     if (sortBy === "popular") {
-      return b.likes - a.likes
+      return b.likes + b.replies.length - (a.likes + a.replies.length)
     }
-    // For "recent", we'd normally sort by date, but for this example we'll use the order
-    return 0
+    // For "recent", compare dates
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   })
+
+  if (sortedTopics.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">No discussions found. Start one to get the conversation going!</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -101,7 +53,7 @@ export default function ForumTopicList({ sortBy = "recent" }: ForumTopicListProp
             <CardContent className="p-6">
               <div className="flex flex-col space-y-4">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-1">
+                  <div className="space-y-1 flex-1">
                     <h3 className="font-semibold text-lg">{topic.title}</h3>
                     <div className="flex flex-wrap gap-2">
                       {topic.tags.map((tag) => (
@@ -127,14 +79,14 @@ export default function ForumTopicList({ sortBy = "recent" }: ForumTopicListProp
                   <div className="flex items-center space-x-4 text-muted-foreground text-sm">
                     <div className="flex items-center">
                       <MessageSquare className="mr-1 h-4 w-4" />
-                      <span>{topic.replies}</span>
+                      <span>{topic.replies.length}</span>
                     </div>
                     <div className="flex items-center">
                       <ThumbsUp className="mr-1 h-4 w-4" />
                       <span>{topic.likes}</span>
                     </div>
                     <div className="text-xs">
-                      <span>Last activity: {topic.lastActivity}</span>
+                      <span>{topic.createdAt}</span>
                     </div>
                   </div>
                 </div>
